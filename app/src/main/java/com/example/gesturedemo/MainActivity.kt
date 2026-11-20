@@ -43,6 +43,8 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.ui.unit.IntOffset
 import kotlin.math.roundToInt
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.gestures.rememberScrollableState
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -150,8 +152,32 @@ fun PointerInputDrag(modifier: Modifier = Modifier) {
 }
 
 @Composable
+fun ScrollableModifier(modifier: Modifier = Modifier) {
+    var offset by remember { mutableStateOf(0f) }
+
+    Box(
+        modifier
+            .fillMaxSize()
+            .scrollable(
+                orientation = Orientation.Vertical,
+                state = rememberScrollableState { distance ->
+                    offset += distance
+                    distance
+                }
+            )
+    ) {
+        Box(
+            modifier = Modifier
+                .size(90.dp)
+                .offset { IntOffset(0, offset.roundToInt()) }
+                .background(Color.Red)
+        )
+    }
+}
+
+@Composable
 fun MainScreen(modifier: Modifier = Modifier) {
-    PointerInputDrag(modifier)
+    ScrollableModifier(modifier)
 }
 
 @Preview(showBackground = true, showSystemUi = true)
